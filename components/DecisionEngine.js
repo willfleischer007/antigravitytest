@@ -1,9 +1,64 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  horizontalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+
 import schoolsData from '@/data/schools.json'
 import { calculateCompositeScore, DEFAULT_WEIGHTS } from '@/lib/scoring'
 import styles from './DecisionEngine.module.css'
+
+// Sortable Header Component
+function SortableHeader({ id, school, weights, allSchools, onRemove }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      {...attributes} 
+      {...listeners} 
+      className={`${styles.headerCell} ${school.isRuledOut ? styles.ruledOut : ''}`}
+    >
+      <div className={styles.schoolName}>
+        {school.name}
+        <button 
+          className={styles.removeBtn} 
+          onPointerDown={(e) => e.stopPropagation()} 
+          onClick={() => onRemove(school.instanceId)}
+        >x</button>
+      </div>
+      <div className={styles.score}>
+        {school.isRuledOut ? '[ RULED OUT ]' : `${calculateCompositeScore(school, allSchools, weights)} / 100`}
+      </div>
+    </div>
+  )
+}
 
 export default function DecisionEngine() {
   const [selectedSchools, setSelectedSchools] = useState([])
@@ -11,7 +66,13 @@ export default function DecisionEngine() {
   const [isWeightsOpen, setIsWeightsOpen] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // Load from local storage
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
   useEffect(() => {
     const savedData = localStorage.getItem('mba_decision_data')
     if (savedData) {
@@ -22,7 +83,6 @@ export default function DecisionEngine() {
     setIsLoaded(true)
   }, [])
 
-  // Save to local storage
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem('mba_decision_data', JSON.stringify({
@@ -39,7 +99,7 @@ export default function DecisionEngine() {
     
     const newSchool = {
       ...schoolBase,
-      instanceId: Date.now(),
+      instanceId: `id-${Date.now()}`,
       prestigeTier: 3,
       brandPerception: 3,
       cultureScore: 3,
@@ -54,6 +114,17 @@ export default function DecisionEngine() {
     setSelectedSchools([...selectedSchools, newSchool])
   }
 
+  const handleDragEnd = (event) => {
+    const { active, over } = event
+    if (active.id !== over.id) {
+      setSelectedSchools((items) => {
+        const oldIndex = items.findIndex(i => i.instanceId === active.id)
+        const newIndex = items.findIndex(i => i.instanceId === over.id)
+        return arrayMove(items, oldIndex, newIndex)
+      })
+    }
+  }
+
   const updateSchoolField = (instanceId, field, value) => {
     setSelectedSchools(selectedSchools.map(s => 
       s.instanceId === instanceId ? { ...s, [field]: value } : s
@@ -66,28 +137,19 @@ export default function DecisionEngine() {
     }
   }
 
-  const resetAll = () => {
-    if (confirm('ERASE ALL DATA AND START OVER?')) {
-      setSelectedSchools([])
-      setWeights(DEFAULT_WEIGHTS)
-    }
-  }
-
-  const renderStars = (instanceId, field, current) => {
-    return (
-      <div className={styles.starRating}>
-        {[1, 2, 3, 4, 5].map(star => (
-          <span 
-            key={star} 
-            className={star <= current ? styles.starFilled : styles.starEmpty}
-            onClick={() => updateSchoolField(instanceId, field, star)}
-          >
-            {star <= current ? '★' : '☆'}
-          </span>
-        ))}
-      </div>
-    )
-  }
+  const renderStars = (instanceId, field, current) => (
+    <div className={styles.starRating}>
+      {[1, 2, 3, 4, 5].map(star => (
+        <span 
+          key={star} 
+          className={star <= current ? styles.starFilled : styles.starEmpty}
+          onClick={() => updateSchoolField(instanceId, field, star)}
+        >
+          {star <= current ? '★' : '☆'}
+        </span>
+      ))}
+    </div>
+  )
 
   if (!isLoaded) return <div className={styles.loading}>INITIALIZING...</div>
 
@@ -97,7 +159,7 @@ export default function DecisionEngine() {
         <h1>MBA DECISION ENGINE v2.0</h1>
         <div className={styles.headerLinks}>
           <button>[?] HOW THIS WORKS</button>
-          <button onClick={resetAll}>RESET ALL</button>
+          <button onClick={() => confirm('RESET ALL?') && setSelectedSchools([])}>RESET ALL</button>
         </div>
       </header>
 
@@ -111,17 +173,11 @@ export default function DecisionEngine() {
               </option>
             ))}
           </select>
-          <button onClick={() => {/* Custom school logic */}}>[+ CUSTOM]</button>
         </div>
-        
         <div className={styles.actions}>
-          <button onClick={() => setIsWeightsOpen(!isWeightsOpen)}>
-            [{isWeightsOpen ? 'CLOSE' : 'WEIGHTS'}]
-          </button>
+          <button onClick={() => setIsWeightsOpen(!isWeightsOpen)}>[{isWeightsOpen ? 'CLOSE' : 'WEIGHTS'}]</button>
           <button onClick={() => window.print()}>[EXPORT HTML]</button>
-          <button disabled={selectedSchools.filter(s => !s.isRuledOut).length < 2}>
-            [SHARE TO REDDIT]
-          </button>
+          <button disabled={selectedSchools.filter(s => !s.isRuledOut).length < 2}>[SHARE TO REDDIT]</button>
         </div>
       </div>
 
@@ -134,7 +190,7 @@ export default function DecisionEngine() {
           <div className={styles.weightGrid}>
              {Object.keys(weights).map(cat => (
                <div key={cat} className={styles.weightItem}>
-                 <label>{cat.toUpperCase()}: {Math.round(weights[cat] * 100)}%</label>
+                 <label>{cat.toUpperCase()}: {(weights[cat] * 100).toFixed(0)}%</label>
                  <input 
                   type="range" min="0" max="100" 
                   value={weights[cat] * 100} 
@@ -154,117 +210,88 @@ export default function DecisionEngine() {
                </div>
              ))}
           </div>
-          <div className={styles.weightTotal}>
-            TOTAL: {Math.round(Object.values(weights).reduce((a, b) => a + b, 0) * 100)}%
-          </div>
         </div>
       )}
 
       <div className={styles.comparisonGrid}>
         {selectedSchools.length === 0 ? (
-          <div className={styles.emptyState}>
-             --------------------------------------------------<br/>
-             [ NO SCHOOLS SELECTED ]<br/>
-             SELECT FROM DROPDOWN TO BEGIN COMPARISON<br/>
-             --------------------------------------------------
-          </div>
+          <div className={styles.emptyState}>[ SELECT SCHOOLS TO BEGIN ]</div>
         ) : (
           <div className={styles.scrollArea}>
-             {/* Sticky Header Row */}
-             <div className={styles.stickyHeader}>
-                <div className={styles.labelCell}>SCHOOL</div>
+            <DndContext 
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <div className={styles.stickyHeader}>
+                <div className={styles.labelCell}>SCHOOL (DRAG TO REORDER)</div>
+                <SortableContext 
+                  items={selectedSchools.map(s => s.instanceId)}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  {selectedSchools.map((school) => (
+                    <SortableHeader 
+                      key={school.instanceId} 
+                      id={school.instanceId} 
+                      school={school} 
+                      weights={weights} 
+                      allSchools={selectedSchools}
+                      onRemove={removeSchool}
+                    />
+                  ))}
+                </SortableContext>
+              </div>
+            </DndContext>
+
+            {/* Data Rows (Non-draggable for simplicity in V1) */}
+            <section className={styles.categorySection}>
+              <div className={styles.categoryTitle}>PRESTIGE & BRAND</div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>OVERALL TIER</div>
                 {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={`${styles.headerCell} ${school.isRuledOut ? styles.ruledOut : ''}`}>
-                    <div className={styles.schoolName}>
-                      {school.name}
-                      <button className={styles.removeBtn} onClick={() => removeSchool(school.instanceId)}>x</button>
-                    </div>
-                    <div className={styles.score}>
-                      {school.isRuledOut ? '[ RULED OUT ]' : `${calculateCompositeScore(school, selectedSchools, weights)} / 100`}
-                    </div>
+                  <div key={school.instanceId} className={styles.cell}>
+                    {renderStars(school.instanceId, 'prestigeTier', school.prestigeTier)}
                   </div>
                 ))}
-             </div>
+              </div>
+            </section>
 
-             <section className={styles.categorySection}>
-                <div className={styles.categoryTitle}>PRESTIGE & BRAND ({(weights.prestige * 100).toFixed(0)}%)</div>
-                <div className={styles.row}>
-                    <div className={styles.labelCell}>OVERALL PRESTIGE</div>
-                    {selectedSchools.map(school => (
-                      <div key={school.instanceId} className={styles.cell}>
-                        {renderStars(school.instanceId, 'prestigeTier', school.prestigeTier)}
-                      </div>
-                    ))}
-                </div>
-                <div className={styles.row}>
-                    <div className={styles.labelCell}>BRAND PERCEPTION</div>
-                    {selectedSchools.map(school => (
-                      <div key={school.instanceId} className={styles.cell}>
-                        {renderStars(school.instanceId, 'brandPerception', school.brandPerception)}
-                      </div>
-                    ))}
-                </div>
-             </section>
+            <section className={styles.categorySection}>
+              <div className={styles.categoryTitle}>FINANCIAL</div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>EST. 2-YR TOTAL</div>
+                {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    <input 
+                      className={styles.numInput} type="number"
+                      value={school.estTotal}
+                      onChange={(e) => updateSchoolField(school.instanceId, 'estTotal', parseInt(e.target.value))}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>SCHOLARSHIP</div>
+                {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    <input 
+                      className={styles.numInput} type="number"
+                      value={school.scholarship}
+                      onChange={(e) => updateSchoolField(school.instanceId, 'scholarship', parseInt(e.target.value))}
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
 
-             <section className={styles.categorySection}>
-                <div className={styles.categoryTitle}>PROGRAM FEEL ({(weights.culture * 100).toFixed(0)}%)</div>
-                <div className={styles.row}>
-                    <div className={styles.labelCell}>CULTURE SCORE</div>
-                    {selectedSchools.map(school => (
-                      <div key={school.instanceId} className={styles.cell}>
-                        {renderStars(school.instanceId, 'cultureScore', school.cultureScore)}
-                      </div>
-                    ))}
-                </div>
-                <div className={styles.row}>
-                    <div className={styles.labelCell}>GUT FEEL</div>
-                    {selectedSchools.map(school => (
-                      <div key={school.instanceId} className={styles.cell}>
-                        {renderStars(school.instanceId, 'gutFeel', school.gutFeel)}
-                      </div>
-                    ))}
-                </div>
-             </section>
-
-             <section className={styles.categorySection}>
-                <div className={styles.categoryTitle}>FINANCIAL ({(weights.financial * 100).toFixed(0)}%)</div>
-                <div className={styles.row}>
-                    <div className={styles.labelCell}>EST. 2-YR TOTAL</div>
-                    {selectedSchools.map(school => (
-                      <div key={school.instanceId} className={styles.cell}>
-                        <input 
-                          className={styles.numInput}
-                          type="number"
-                          value={school.estTotal}
-                          onChange={(e) => updateSchoolField(school.instanceId, 'estTotal', parseInt(e.target.value))}
-                        />
-                      </div>
-                    ))}
-                </div>
-                <div className={styles.row}>
-                    <div className={styles.labelCell}>SCHOLARSHIP</div>
-                    {selectedSchools.map(school => (
-                      <div key={school.instanceId} className={styles.cell}>
-                        <input 
-                          className={styles.numInput}
-                          type="number"
-                          value={school.scholarship}
-                          onChange={(e) => updateSchoolField(school.instanceId, 'scholarship', parseInt(e.target.value))}
-                        />
-                      </div>
-                    ))}
-                </div>
-             </section>
-
-             <section className={styles.categorySection}>
-                <div className={styles.categoryTitle}>OTHER</div>
+            <section className={styles.categorySection}>
+                <div className={styles.categoryTitle}>NOTES & STATUS</div>
                 <div className={styles.row}>
                     <div className={styles.labelCell}>RULED OUT?</div>
                     {selectedSchools.map(school => (
                       <div key={school.instanceId} className={styles.cell}>
                         <input 
-                          type="checkbox"
-                          checked={school.isRuledOut}
+                          type="checkbox" checked={school.isRuledOut}
                           onChange={(e) => updateSchoolField(school.instanceId, 'isRuledOut', e.target.checked)}
                         />
                       </div>
@@ -275,8 +302,7 @@ export default function DecisionEngine() {
                    {selectedSchools.map(school => (
                       <div key={school.instanceId} className={styles.cell}>
                         <textarea 
-                          className={styles.notesArea}
-                          value={school.notes}
+                          className={styles.notesArea} value={school.notes}
                           onChange={(e) => updateSchoolField(school.instanceId, 'notes', e.target.value)}
                         />
                       </div>

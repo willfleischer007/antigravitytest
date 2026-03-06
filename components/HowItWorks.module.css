@@ -1,0 +1,76 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border: 2px solid black;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.header {
+  background: var(--navy);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid black;
+}
+
+.header h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.header button {
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.content section {
+  margin-bottom: 2rem;
+}
+
+.content h3 {
+  background: #eee;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+}
+
+.content p, .content li {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.content ul {
+  padding-left: 1.5rem;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: #666;
+}

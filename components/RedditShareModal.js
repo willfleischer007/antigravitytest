@@ -31,6 +31,7 @@ export default function RedditShareModal({ isOpen, onClose, schools, weights }) 
     .slice(0, 5)
 
   const handleExport = async () => {
+    if (typeof window === 'undefined') return
     setIsExporting(true)
     const node = document.getElementById('reddit-card-canvas')
     

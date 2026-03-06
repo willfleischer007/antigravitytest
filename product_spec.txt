@@ -1,0 +1,662 @@
+┌─────────────────────────────────────┐
+│   MBA DECISION ENGINE — PRD v2.0   │
+└─────────────────────────────────────┘
+Product Requirements Document
+Ranking source: Bloomberg Businessweek 2025-26  |  Tuition data: March 2026
+
+1. OVERVIEW
+MBA Decision Engine is a single-page web application that helps prospective MBA students compare up to 10 programs on dimensions they care about most, synthesized into a scored, side-by-side comparison. The school dropdown is pre-populated with Bloomberg Businessweek's 2025-26 Top 50 US MBA programs. Estimated 2-year cost is pre-seeded per school using publicly listed 2025-26 tuition data plus standard living expense estimates, and is editable by the user.
+
+Target users
+MBA applicants comparing 2-10 programs
+Platform
+Web app (desktop-first, mobile-friendly)
+Ranking source
+Bloomberg Businessweek 2025-26 (US only)
+Max schools
+10 (selected from Top 50 dropdown)
+Tuition data
+Pre-seeded from published 2025-26 school data
+Data persistence
+Local storage (no login required)
+Scoring
+Weighted composite, user-adjustable
+Export
+Downloadable static HTML file
+
+2. DESIGN DIRECTION
+2a. Visual Style
+The app should feel like a hyper-functional relic from the early internet — think Craigslist meets a Bloomberg Terminal. The goal is function-forward, quirky, and deliberately lo-fi. This is not a polished SaaS product; it should feel like something a smart grad student built at 2am.
+
+Typography: Monospace throughout (Courier New or similar). No serifs, no sans-serifs.
+Color palette: White background, navy/dark blue headers and accents, gray secondary text, occasional yellow highlight for scores or flags.
+No shadows, no gradients, no rounded corners. Hard edges only.
+Borders and dividers should be visible and boxy — lean into the table aesthetic.
+ASCII-style decorative elements are encouraged (e.g., dashed separators, bracket labels).
+Buttons look like hyperlinks or old-school form inputs — not modern pill buttons.
+Hover states: underlines and color changes only, not box shadows.
+
+2b. Layout
+Schools are displayed as columns, side by side. Each column = one school.
+A sticky top bar shows school names and composite scores at all times.
+Below the sticky bar: scrollable rows for each data field, labeled on the left.
+A collapsible weight panel lives in the top-right corner.
+Dealbreaker schools are visually grayed out / struck through in the header bar.
+Column reordering via drag-and-drop is INCLUDED IN V1. Users can grab a school column header and drag it to a new position. Reordering does not affect scores.
+
+3. SCHOOL SELECTION
+3a. Adding Schools
+Users can add between 2 and 10 schools. Each school is added via a dropdown pre-populated with all 50 programs from the Bloomberg Businessweek 2025-26 US MBA ranking. Schools already added are grayed out in the dropdown.
+
+Schools already added to the comparison are grayed out in the dropdown.
+Users can also type in a custom school name (free-text) for programs not on the list.
+Schools can be removed at any time. Removing one reflows the remaining columns.
+Column order can be rearranged via drag-and-drop (see Section 2b).
+
+3b. Pre-Populated School List — Bloomberg Businessweek 2025-26 Top 50 (US)
+The table below is the definitive school list and should be hard-coded into the dropdown. Bloomberg rank, school name, city, annual tuition (2025-26), and estimated 2-year total cost are all pre-seeded. Annual tuition sourced from each school's published cost-of-attendance page as of March 2026. Estimated 2-year total = (annual tuition x 2) + (estimated annual living expenses x 2), using each school's published single-student living allowance. All figures are editable by the user in the Financial fields.
+
+NOTE TO DEVELOPER: Verify all tuition figures directly from each school's financial aid / cost of attendance page before shipping. Figures below are accurate as of March 2026 but update annually.
+
+#
+School
+Location
+Annual Tuition(2025-26)
+Est. 2-Yr Total(Tuition + Living)
+1
+Stanford GSB
+Stanford, CA
+$85,755
+$257,000
+2
+Wharton (Penn)
+Philadelphia, PA
+$92,280
+$260,000
+3
+Haas (UC Berkeley)
+Berkeley, CA
+$85,406
+$228,000
+4
+Harvard Business School
+Boston, MA
+$78,700
+$236,000
+5
+Kellogg (Northwestern)
+Evanston, IL
+$86,370
+$216,000
+6
+Tuck (Dartmouth)
+Hanover, NH
+$80,620
+$227,000
+7
+Booth (Chicago)
+Chicago, IL
+$84,198
+$220,000
+8
+Johnson (Cornell)
+Ithaca, NY
+$83,106
+$205,000
+9
+Columbia Business School
+New York, NY
+$91,172
+$269,000
+10
+Darden (UVA)
+Charlottesville, VA
+$81,940
+$213,000
+11
+Sloan (MIT)
+Cambridge, MA
+$86,530
+$220,000
+12
+Stern (NYU)
+New York, NY
+$89,524
+$263,000
+13
+Fuqua (Duke)
+Durham, NC
+$81,000
+$226,000
+14
+Ross (Michigan)
+Ann Arbor, MI
+$81,800
+$206,000
+15
+Tepper (Carnegie Mellon)
+Pittsburgh, PA
+$78,362
+$204,000
+16
+Goizueta (Emory)
+Atlanta, GA
+$71,900
+$200,000
+17
+Yale SOM
+New Haven, CT
+$84,900
+$228,000
+18
+Foster (UW)
+Seattle, WA
+$59,574
+$163,000
+19
+Anderson (UCLA)
+Los Angeles, CA
+$79,452
+$260,000
+20
+Marshall (USC)
+Los Angeles, CA
+$77,000
+$232,000
+21
+McCombs (UT Austin)
+Austin, TX
+$59,684
+$155,000
+22
+McDonough (Georgetown)
+Washington, DC
+$67,184
+$178,000
+23
+Scheller (Georgia Tech)
+Atlanta, GA
+$33,228
+$133,000
+24
+Owen (Vanderbilt)
+Nashville, TN
+$68,568
+$189,000
+25
+Mendoza (Notre Dame)
+Notre Dame, IN
+$67,850
+$188,000
+26
+Jones (Rice)
+Houston, TX
+$72,500
+$197,000
+27
+Kenan-Flagler (UNC)
+Chapel Hill, NC
+$60,476
+$157,000
+28
+Simon (Rochester)
+Rochester, NY
+$64,000
+$171,000
+29
+Broad (Michigan State)
+East Lansing, MI
+$46,000
+$124,000
+30
+Carlson (Minnesota)
+Minneapolis, MN
+$55,000
+$148,000
+31
+Kelley (Indiana)
+Bloomington, IN
+$55,695
+$144,000
+32
+Questrom (Boston University)
+Boston, MA
+$65,804
+$183,000
+33
+Olin (WashU St. Louis)
+St. Louis, MO
+$68,200
+$193,000
+34
+Smeal (Penn State)
+University Park, PA
+$43,000
+$122,000
+35
+Fisher (Ohio State)
+Columbus, OH
+$42,600
+$116,000
+36
+Mason (William &amp; Mary)
+Williamsburg, VA
+$51,500
+$134,000
+37
+Smith (Maryland)
+College Park, MD
+$40,374
+$110,000
+38
+Freeman (Tulane)
+New Orleans, LA
+$62,000
+$172,000
+39
+Marriott (BYU)
+Provo, UT
+$19,200
+$78,000
+40
+Olin (Babson)
+Wellesley, MA
+$65,000
+$181,000
+41
+Cox (SMU)
+Dallas, TX
+$60,000
+$162,000
+42
+Terry (Georgia)
+Athens, GA
+$36,378
+$101,000
+43
+Leeds (Colorado)
+Boulder, CO
+$42,000
+$116,000
+44
+Carey (Johns Hopkins)
+Washington, DC
+$65,000
+$183,000
+45
+Bauer (Houston)
+Houston, TX
+$31,000
+$91,000
+46
+Herbert (Miami)
+Coral Gables, FL
+$60,000
+$168,000
+47
+Gabelli (Fordham)
+New York, NY
+$60,100
+$172,000
+48
+Krannert (Purdue)
+West Lafayette, IN
+$32,000
+$93,000
+49
+W.P. Carey (ASU)
+Tempe, AZ
+$37,000
+$102,000
+50
+Lundquist (Oregon)
+Eugene, OR
+$35,000
+$98,000
+* Public school tuition shown is out-of-state rate. In-state figures will be lower and can be entered manually.
+
+4. DATA FIELDS (PER SCHOOL)
+Each school column contains 10 input fields across 5 weighted categories, plus two unweighted fields (notes and dealbreaker). All fields are editable in-place. Schools are added via the dropdown described in Section 3.
+
+4a. Prestige &amp; Brand
+Overall prestige tier — 1-5 star rating (user-assigned, not derived from ranking position)
+Post-MBA brand perception in target industry — 1-5 star rating. User applies this to whatever career track they are considering; no label is prescribed by the app.
+
+4b. Program Feel &amp; Culture
+Culture score — 1-5 stars (collaborative vs. competitive, based on research, visits, or outreach)
+Gut feel rating — 1-5 stars (pure instinct from interview, campus visit, or online research)
+
+4c. Career Fit
+Recruiting strength in target field — 1-5 stars. The user decides what their target field means to them; the app labels this generically as 'Career Fit.'
+Key employer presence on campus — Yes / Partial / No (user defines which employers matter; this is a quick flag, not a list)
+
+4d. Financial
+Scholarship awarded — dollar amount (numeric input, $ formatted). Default: $0.
+Estimated total cost over 2 years — dollar amount. PRE-SEEDED from the school table in Section 3b. User can edit freely. Includes tuition + living estimate for 2 full years.
+   -&gt; Net cost is auto-calculated: Estimated Total minus Scholarship.
+
+4e. Location &amp; Life
+City — pre-filled from school dropdown, read-only
+Family / personal proximity — 1-5 stars (5 = very close, 1 = far away). User defines what 'close' means to them.
+
+4f. Unweighted Fields (always visible, never scored)
+Notes — open text box with no length limit. Freeform observations, anecdotes, things that don't fit elsewhere.
+Dealbreaker flag — checkbox. When checked, the school's column is visually grayed out and a strikethrough appears on the school name in the sticky header. Its score is hidden and replaced with '[ RULED OUT ]'.
+
+5. SCORING
+5a. Composite Score
+Each school receives a 0-100 composite score, visible at all times in the sticky header next to the school name. Higher = better.
+
+Scoring formula:
+Each 1-5 star field is normalized to a 0-20 scale (1 star = 4 pts, 5 stars = 20 pts).
+'Employer presence': Yes = 20, Partial = 10, No = 0.
+Financial score: Net cost is ranked relative to other schools in the comparison. The lowest net cost = 20, highest = 0, others interpolated. This avoids penalizing expensive schools in isolation.
+Each category's field scores are averaged, then multiplied by that category's weight.
+All weighted category scores are summed to produce the final 0-100 composite.
+
+5b. Category Weights
+Users set weights via sliders in a collapsible panel. Weights always sum to 100%. Adjusting one slider auto-adjusts the others proportionally.
+
+Default weights:
+
+Prestige &amp; Brand
+30%
+Program Feel &amp; Culture
+25%
+Career Fit
+20%
+Financial
+15%
+Location &amp; Life
+10%
+
+5c. Score Display
+Scores update in real time as the user changes inputs or adjusts weights.
+Displayed as a number (e.g., '74 / 100') in the sticky header column.
+The highest-scoring non-ruled-out school is subtly highlighted (e.g., light yellow background on its header).
+Dealbreaker schools show '[ RULED OUT ]' instead of a score.
+
+6. WEIGHT ADJUSTMENT PANEL
+The weight panel is collapsible, positioned in the upper-right area of the screen. When collapsed, a small '[WEIGHTS]' label is visible; clicking expands it.
+
+Five sliders, one per category, labeled with the category name and current % value.
+A 'RESET DEFAULTS' button restores the default weight distribution.
+A running total displays at the bottom (e.g., 'TOTAL: 100%'). Shown in red if weights fail to sum to 100%.
+Adjustments update composite scores instantly.
+
+7. DATA PERSISTENCE &amp; EXPORT
+All data is saved to browser local storage automatically. No account or login required.
+A 'RESET ALL' button clears everything and returns to the blank state (with a confirmation prompt).
+
+7a. Export: Downloadable HTML File
+The 'EXPORT' button generates a self-contained, downloadable .html file that the user can save to their desktop, share with others, or print as PDF from the browser. Requirements for the export:
+
+The exported file is a standalone HTML snapshot — all styles and data are embedded inline. No external dependencies.
+It should be visually identical to the app at the moment of export: same columns, same scores, same notes, same weight settings.
+Ruled-out schools should appear grayed out / struck through in the export, as they do in the app.
+The export is static (no interactivity). It is a read-only snapshot for reference or sharing.
+Filename format: MBA_Decision_[date].html (e.g., MBA_Decision_2026-04-01.html).
+The export does NOT require an internet connection to view once saved.
+
+8. COLUMN DRAG-AND-DROP REORDERING
+Column reordering is included in v1. Users can drag a school column to any position to reorganize the comparison layout.
+
+The drag handle is the school name / header area at the top of each column.
+A visual indicator (e.g., dashed border or drop zone highlight) shows where the column will land.
+Reordering does not affect scores, weights, or any data. It is purely a display preference.
+Reordering is reflected in the exported HTML file.
+Column order is persisted in local storage (survives page refreshes).
+Drag-and-drop should work on both desktop (mouse) and tablet (touch) devices.
+
+9. EDGE CASES &amp; CONSTRAINTS
+Min schools
+2 required before scores display
+Max schools
+10 — Add School button disables at 10
+Empty fields
+Unrated fields contribute 0 to that dimension
+All ruled out
+App shows ASCII sad face and prompts user to un-flag at least one school
+Single school
+Scores display, but a note says 'add more schools to compare'
+Tied scores
+Both schools highlighted; no tiebreaker logic applied
+Custom school
+No pre-seeded tuition data; cost fields default to $0 and must be filled manually
+In-state tuition
+User can manually edit the pre-seeded figure for public schools
+
+10. OUT OF SCOPE (v1)
+User accounts or cloud sync
+AI-generated recommendations or commentary
+Mobile-native app
+Sharing / collaboration features
+Integration with external data APIs (live tuition, rankings, salary data)
+Historical or multi-year tracking
+Non-US school support
+
+11. DEVELOPER NOTES &amp; DATA SOURCES
+The following sources were used to compile the school list and financial data in this PRD:
+
+Rankings: Bloomberg Businessweek 2025-26 Best Business Schools (US), bloomberg.com/business-schools
+Tuition verification: each school's published Cost of Attendance / Financial Aid page, accessed March 2026
+Living expense estimates: school-published single-student housing/food allowances; urban schools (NYC, SF, LA, Boston) carry higher estimates
+All financial figures should be re-verified annually as schools update tuition each spring
+
+
+12. 'HOW IT WORKS' PAGE
+The app includes a dedicated informational page (or modal) accessible from the main UI via a clearly labeled link or button (e.g., '[?] HOW THIS WORKS'). Its purpose is to build trust by explaining the scoring methodology, data sources, and known limitations in plain language. This page is read-only — no inputs.
+
+12a. Page Sections
+
+i. What This App Does
+A 2-3 sentence plain-language summary. Example:
+
+&quot;MBA Decision Engine lets you compare up to 10 MBA programs side-by-side and score them based on what matters most to you. You set the weights. You enter the ratings. The app does the math. No algorithm is telling you what to think — it's a calculator, not a recommendation engine.&quot;
+
+ii. How Scoring Works
+Explain the scoring formula in plain English. Cover all of the following:
+
+Five categories: Prestige &amp; Brand, Program Feel &amp; Culture, Career Fit, Financial, and Location &amp; Life.
+Each category contains 1-2 input fields. Most fields are rated 1-5 stars; some are Yes/Partial/No or dollar amounts.
+Star ratings (1-5) are converted to a 0-20 point scale per field.
+Yes/Partial/No maps to 20 / 10 / 0 points.
+Financial scoring is relative: the school with the lowest net cost among your selections scores 20; the highest scores 0; others are interpolated. This means a school's financial score changes as you add or remove other schools. The page should call this out explicitly.
+Each category's fields are averaged, then multiplied by that category's weight percentage.
+The five weighted category scores sum to a 0-100 composite.
+Scores update in real time when you change any input or adjust any weight.
+
+iii. How Weights Work
+Explain the weight sliders and their defaults:
+
+Users can adjust how much each category contributes to the final score using sliders in the [WEIGHTS] panel.
+Weights always sum to 100%. Adjusting one slider proportionally nudges the others.
+Default weights: Prestige 30%, Culture 25%, Career Fit 20%, Financial 15%, Location 10%. These can be changed at any time.
+There is no 'correct' set of weights. The defaults reflect a general starting point; change them to match your own priorities.
+
+iv. School Data &amp; Tuition Sources
+Explain where the school list and financial data come from:
+
+School list and ranking order: Bloomberg Businessweek Best Business Schools 2025-26 (US). Link: bloomberg.com/business-schools/regions/us
+Annual tuition figures: sourced from each school's published Cost of Attendance / Financial Aid page in March 2026. Out-of-state rates are shown for public universities.
+Estimated 2-year total: annual tuition x 2 plus school-published single-student living expense allowance x 2.
+All figures are pre-seeded defaults. Users should verify and update them. Tuition increases annually, typically each spring.
+A note should read: 'These numbers are a starting point, not a guarantee. Always check the school's official financial aid page for the most current figures.'
+
+v. What the Score Is NOT
+This section sets honest expectations and prevents misuse. Include language like:
+
+'The score is only as good as the ratings you enter. It reflects your inputs, not objective truth.'
+'Two people with identical acceptances and identical goals might score schools very differently depending on how they weight the categories — and both could be right.'
+'This app does not have access to current salary data, employment outcomes, or real-time tuition. The financial figures are estimates.'
+'A higher score does not mean a school is 'better.' It means it scored higher given your specific inputs and weight preferences.'
+
+vi. Known Limitations
+Financial scoring is relative to your comparison group. Adding or removing schools can change existing scores.
+The Bloomberg Businessweek ranking reflects one methodology. It weighs alumni compensation heavily and may not align with other rankings.
+Public school tuition shown is the out-of-state rate. In-state students should update the pre-seeded figure manually.
+Tuition data was pulled in March 2026. Schools update their published figures each spring.
+The app does not account for living cost differences within a metro area, fellowship packages, or loan terms.
+
+vii. Feedback &amp; Updates
+Include a short note inviting users to flag errors (e.g., outdated tuition data) and directing them to a contact method (email, GitHub issue, or Reddit thread, depending on how the developer wants to handle it). Suggested text:
+
+&quot;Found an error or out-of-date figure? [Contact / Submit issue]. This tool is built and maintained by a fellow MBA applicant, not a business school or data provider.&quot;
+
+12b. Design
+The How It Works page should match the retro monospace aesthetic of the rest of the app.
+Use the same font, color palette, and border styling. Headers in navy, body in dark gray.
+This page should NOT look like a generic FAQ or legal disclaimer page. It should feel like a continuation of the app.
+Accessible from every screen — a '[?]' or '[HOW THIS WORKS]' text link in the top navigation.
+Can be a full page or a slide-in panel (modal). Either is acceptable as long as the content is fully visible on mobile.
+
+13. REDDIT SHARE CARD
+The 'Share to Reddit' feature generates a compact, readable image — a 'decision card' — optimized for viewing in the Reddit mobile app. Its primary use case is a post in r/MBA where someone asks for input on their decision, sharing the card as context without writing out a wall of text.
+
+Example r/MBA post: 'Got into HBS, Columbia, and Booth. Targeting IB/restructuring, from the Northeast. Here's how I've been thinking about it — am I weighting this right?' [image attached]
+
+13a. How It Works (Technical)
+When the user clicks '[SHARE TO REDDIT]', the app:
+
+Opens a pre-export modal asking the user to confirm or fill in two context fields: Target Industry and Home Region (see Section 13c).
+Once the user confirms, the app renders a styled card to an off-screen canvas element using the HTML Canvas API (or a similar library like html2canvas).
+The canvas is exported as a .png image file and immediately downloaded to the user's device.
+The user then manually attaches the image to their Reddit post. The app does NOT post directly to Reddit — it generates a shareable file only.
+Why not direct Reddit API posting? Avoids OAuth complexity, keeps the app privacy-respecting, and matches how most people actually post on mobile (upload from camera roll).
+
+13b. Card Content &amp; Layout
+The card is a portrait-oriented PNG image, optimized for Reddit mobile (recommended: 1080px wide x ~1350px tall). It should be legible at thumbnail size and fully readable when tapped to expand. All text uses the app's monospace font, embedded in the canvas render.
+
+Card Sections (top to bottom):
+
+Header bar
+App name + tagline: 'MBA Decision Engine | mba-engine.app' (or actual deployed URL). Dark navy background, white text.
+Context block
+Two lines: 'Target industry: [user input]' and 'Home region: [user selection or custom text]'. Light gray background. These humanize the card for the reader.
+Comparison table
+One column per school. Rows: SCORE (large, bold), then one row per category showing the user's star rating or value. Max 5 schools shown on card (see Section 13d for overflow).
+Weights bar
+A single line showing the user's active weights: 'Prestige 30% | Culture 25% | Career 20% | Financial 15% | Location 10%' so readers understand how the score was derived.
+Footer
+Small gray text: 'Rankings: Bloomberg Businessweek 2025-26 | Tuition: published school data, Mar 2026 | Scores are user-generated'
+
+Visual mockup (ASCII representation for reference):
+
+┌─────────────────────────────────────────────────────────┐
+│            MBA DECISION CARD  •  mba-engine.app        │
+├─────────────────────────────────────────────────────────┤
+│  Target industry:  Investment Banking / Restructuring   │
+│  Home region:      Northeast US                        │
+├────────────┬──────────────┬──────────────┬─────────────┤
+│            │  HBS         │  Columbia    │  Booth      │
+├────────────┼──────────────┼──────────────┼─────────────┤
+│ SCORE      │  81 / 100   │  74 / 100   │  68 / 100  │
+├────────────┼──────────────┼──────────────┼─────────────┤
+│ Prestige   │ ★★★★★       │ ★★★★☆       │ ★★★★☆      │
+│ Culture    │ ★★★★☆       │ ★★★★☆       │ ★★★☆☆      │
+│ Career Fit │ ★★★★★       │ ★★★★★       │ ★★★★☆      │
+│ Net Cost   │ $220K       │ $195K       │ $180K      │
+│ Location   │ ★★★☆☆       │ ★★★★★       │ ★★☆☆☆      │
+├────────────┼──────────────┼──────────────┼─────────────┤
+│ Ruled out? │ No          │ No          │ No         │
+└────────────┴──────────────┴──────────────┴─────────────┘
+  Weights: Prestige 30% | Culture 25% | Career 20%        
+           Financial 15% | Location 10%                   
+  Generated: mba-engine.app  •  Data: Bloomberg BW 25-26 
+
+13c. Context Fields (Pre-Export Modal)
+Before generating the card, the app shows a small modal with two fields:
+
+Field 1: Target Industry
+Free-text input. Placeholder: 'e.g., Investment Banking, Consulting, Tech Product Management'
+No character limit, but the card will truncate display at ~40 characters with ellipsis if needed.
+Not required — user can leave blank; card shows 'Not specified'.
+
+Field 2: Home Region
+Dropdown with pre-defined options (see table below) PLUS a 'Type my own...' option that reveals a free-text field.
+Purpose: gives readers context on the user's geographic constraints and preferences without revealing exact location.
+The options are intentionally broad — specific enough to be meaningful (e.g., distinguishing Northeast vs. West Coast US matters for location scoring), but not so specific as to be identifying.
+Not required — user can leave blank or select 'Prefer not to say'; card shows 'Not specified'.
+
+Pre-defined region options:
+
+Option Label
+Coverage (for developer reference)
+Northeast US
+New England, NY, NJ, PA, MD, DC
+Midwest US
+IL, OH, MI, IN, WI, MN, MO, IA, and surrounding states
+Southeast US
+FL, GA, NC, SC, VA, TN, AL, MS, KY, WV, AR, LA
+Southwest US
+TX, AZ, NM, OK, NV
+West Coast US
+CA, OR, WA
+Mountain West US
+CO, UT, ID, MT, WY, ND, SD, NE, KS
+Hawaii / Alaska
+—
+Eastern Canada
+Ontario, Quebec, Atlantic provinces
+Western Canada
+BC, Alberta, Prairies
+UK &amp; Ireland
+—
+Western Europe
+France, Germany, Benelux, Nordics, Switzerland, Austria, etc.
+Southern Europe
+Spain, Italy, Portugal, Greece
+Eastern Europe
+Poland, Czech Republic, Romania, Baltics, etc.
+Middle East &amp; North Africa
+Gulf states, Levant, Egypt, Morocco
+Sub-Saharan Africa
+East, West, Southern, Central Africa
+South Asia
+India, Pakistan, Bangladesh, Sri Lanka, Nepal
+East Asia
+China, Japan, South Korea, Taiwan, Hong Kong
+Southeast Asia
+Singapore, Indonesia, Philippines, Vietnam, Thailand, Malaysia, etc.
+Central Asia &amp; Caucasus
+—
+Latin America &amp; Caribbean
+Mexico, Brazil, Colombia, Argentina, Chile, etc.
+Australia &amp; New Zealand
+—
+Other / Prefer not to say
+—
+
+Developer note: The 'Type my own...' option reveals a free-text input. This lets users who want to reveal more context (e.g., 'New York City' or 'Mumbai') do so voluntarily. The free-text input should have a 40-character limit.
+
+13d. Card Display Rules
+Schools are shown in the order they appear in the main comparison (respecting drag-and-drop order).
+Maximum 5 schools on the card. If the user has 6-10 schools, the card shows the top 5 by score (excluding ruled-out schools). A footer note reads: '+[N] more schools not shown.'
+Ruled-out schools are excluded from the card entirely.
+If all schools are ruled out, the export button is disabled with tooltip: 'Un-flag at least one school to generate a card.'
+Star ratings are shown as filled/empty star characters (e.g., ★★★★☆).
+Net cost is shown (not gross cost) as a single dollar figure.
+The composite score is shown large and prominently at the top of each school column.
+The user's custom notes are NOT included on the card (too long, too personal).
+
+13e. Privacy Considerations
+The card is designed to share only what the user explicitly chooses to share. Key privacy rules:
+
+Region is opt-in: the user picks a deliberately broad bucket or types their own. No location is inferred from their device.
+Target industry is opt-in: free-text, user-controlled.
+Financial data (scholarship, net cost) IS shown on the card — this is intentional, as it is often the most relevant context for r/MBA advice-seekers. If a user does not want to share their financial details, they should set scholarship to $0 before exporting.
+No personally identifying information is auto-included. The card does not show the user's name, email, school affiliation, or device metadata.
+The generated PNG is a local file. The app does not upload it to any server.
+
+13f. Button Placement &amp; Label
+Button label: '[SHARE TO REDDIT]' — placed near the HTML export button in the toolbar.
+On mobile / small screens, the label can shorten to '[REDDIT CARD]'.
+The button should only be active when at least 2 non-ruled-out schools are in the comparison. Otherwise, it is grayed out.
+The pre-export modal should have a preview of the card before the user commits to downloading. This lets them confirm the context fields look right.
+
+13g. File Output
+File format: PNG.
+Filename: MBA_Card_[date].png (e.g., MBA_Card_2026-04-01.png).
+Recommended dimensions: 1080 x 1350px at 2x resolution for retina displays (so the underlying canvas is 2160 x 2700px).
+The image must be legible without zooming in on a standard Reddit mobile feed card (approximately 375px wide on a phone screen).
+

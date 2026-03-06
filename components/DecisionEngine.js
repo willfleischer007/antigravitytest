@@ -20,7 +20,8 @@ import { CSS } from '@dnd-kit/utilities'
 
 import schoolsData from '@/data/schools.json'
 import { calculateCompositeScore, DEFAULT_WEIGHTS } from '@/lib/scoring'
-import styles from './DecisionEngine.module.css'
+import HowItWorks from './HowItWorks'
+import RedditShareModal from './RedditShareModal'
 
 // Sortable Header Component
 function SortableHeader({ id, school, weights, allSchools, onRemove }) {
@@ -64,6 +65,8 @@ export default function DecisionEngine() {
   const [selectedSchools, setSelectedSchools] = useState([])
   const [weights, setWeights] = useState(DEFAULT_WEIGHTS)
   const [isWeightsOpen, setIsWeightsOpen] = useState(false)
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false)
+  const [isRedditModalOpen, setIsRedditModalOpen] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
   const sensors = useSensors(
@@ -158,10 +161,18 @@ export default function DecisionEngine() {
       <header className={styles.appHeader}>
         <h1>MBA DECISION ENGINE v2.0</h1>
         <div className={styles.headerLinks}>
-          <button>[?] HOW THIS WORKS</button>
+          <button onClick={() => setIsHowItWorksOpen(true)}>[?] HOW THIS WORKS</button>
           <button onClick={() => confirm('RESET ALL?') && setSelectedSchools([])}>RESET ALL</button>
         </div>
       </header>
+
+      <HowItWorks isOpen={isHowItWorksOpen} onClose={() => setIsHowItWorksOpen(false)} />
+      <RedditShareModal 
+        isOpen={isRedditModalOpen} 
+        onClose={() => setIsRedditModalOpen(false)} 
+        schools={selectedSchools}
+        weights={weights}
+      />
 
       <div className={styles.toolbar}>
         <div className={styles.addSchool}>
@@ -177,7 +188,12 @@ export default function DecisionEngine() {
         <div className={styles.actions}>
           <button onClick={() => setIsWeightsOpen(!isWeightsOpen)}>[{isWeightsOpen ? 'CLOSE' : 'WEIGHTS'}]</button>
           <button onClick={() => window.print()}>[EXPORT HTML]</button>
-          <button disabled={selectedSchools.filter(s => !s.isRuledOut).length < 2}>[SHARE TO REDDIT]</button>
+          <button 
+            disabled={selectedSchools.filter(s => !s.isRuledOut).length < 2}
+            onClick={() => setIsRedditModalOpen(true)}
+          >
+            [SHARE TO REDDIT]
+          </button>
         </div>
       </div>
 
@@ -243,16 +259,71 @@ export default function DecisionEngine() {
               </div>
             </DndContext>
 
-            {/* Data Rows (Non-draggable for simplicity in V1) */}
+            {/* Data Rows */}
             <section className={styles.categorySection}>
               <div className={styles.categoryTitle}>PRESTIGE & BRAND</div>
               <div className={styles.row}>
-                <div className={styles.labelCell}>OVERALL TIER</div>
+                <div className={styles.labelCell}>PRESTIGE TIER</div>
                 {selectedSchools.map(school => (
                   <div key={school.instanceId} className={styles.cell}>
                     {renderStars(school.instanceId, 'prestigeTier', school.prestigeTier)}
                   </div>
                 ))}
+              </div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>BRAND PERCEPTION</div>
+                {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    {renderStars(school.instanceId, 'brandPerception', school.brandPerception)}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className={styles.categorySection}>
+              <div className={styles.categoryTitle}>PROGRAM FEEL & CULTURE</div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>CULTURE SCORE</div>
+                {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    {renderStars(school.instanceId, 'cultureScore', school.cultureScore)}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>GUT FEEL</div>
+                {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    {renderStars(school.instanceId, 'gutFeel', school.gutFeel)}
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className={styles.categorySection}>
+              <div className={styles.categoryTitle}>CAREER FIT</div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>RECRUITING STRENGTH</div>
+                {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    {renderStars(school.instanceId, 'careerFit', school.careerFit)}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.row}>
+                 <div className={styles.labelCell}>KEY EMPLOYER PRESENCE</div>
+                 {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    <select 
+                      value={school.employerPresence}
+                      onChange={(e) => updateSchoolField(school.instanceId, 'employerPresence', e.target.value)}
+                    >
+                      <option value="Yes">Yes</option>
+                      <option value="Partial">Partial</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                 ))}
               </div>
             </section>
 
@@ -279,6 +350,26 @@ export default function DecisionEngine() {
                       value={school.scholarship}
                       onChange={(e) => updateSchoolField(school.instanceId, 'scholarship', parseInt(e.target.value))}
                     />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className={styles.categorySection}>
+              <div className={styles.categoryTitle}>LOCATION & LIFE</div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>CITY</div>
+                {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    {school.location}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.row}>
+                <div className={styles.labelCell}>PROXIMITY (1-5)</div>
+                {selectedSchools.map(school => (
+                  <div key={school.instanceId} className={styles.cell}>
+                    {renderStars(school.instanceId, 'proximity', school.proximity)}
                   </div>
                 ))}
               </div>
@@ -315,3 +406,4 @@ export default function DecisionEngine() {
     </div>
   )
 }
+

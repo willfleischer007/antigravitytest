@@ -115,3 +115,58 @@
   font-weight: bold;
 }
 
+/* Reddit Export Modal */
+.redditModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 4px solid black;
+  padding: 2rem;
+  z-index: 2000;
+  width: 400px;
+  box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+}
+
+.redditModal h3 {
+  margin-bottom: 1rem;
+  background: var(--navy);
+  color: white;
+  padding: 0.5rem;
+}
+
+.fieldGroup {
+  margin-bottom: 1.5rem;
+}
+
+.fieldGroup label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.fieldGroup input, .fieldGroup select {
+  width: 100%;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Target for html-to-image */
+#reddit-card-canvas {
+  width: 1080px;
+  height: 1350px;
+  background: white;
+  padding: 40px;
+  font-family: 'Courier New', Courier, monospace;
+  position: absolute;
+  left: -9999px; /* Hide off-screen */
+  top: 0;
+  border: 1px solid black;
+}
+
+

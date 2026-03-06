@@ -47,7 +47,7 @@ export default function RedditShareModal({ isOpen, onClose, schools, weights }) 
           left: '0',
           top: '0',
           position: 'static',
-          visibility: 'visible'
+          opacity: '1'
         }
       })
       const link = document.createElement('a')
@@ -106,7 +106,7 @@ export default function RedditShareModal({ isOpen, onClose, schools, weights }) 
         </div>
       </div>
 
-      {/* Hidden Preview / Export Canvas - Absolute safety for hiding */}
+      {/* Hidden Preview / Export Canvas - Absolute safety for hiding with opacity */}
       <div 
         id="reddit-card-canvas" 
         className={styles.redditCardCanvas}
@@ -114,7 +114,7 @@ export default function RedditShareModal({ isOpen, onClose, schools, weights }) 
           position: 'fixed', 
           left: '-9999px', 
           top: '-9999px', 
-          visibility: 'hidden', 
+          opacity: 0, 
           pointerEvents: 'none',
           backgroundColor: 'white',
           color: 'black'

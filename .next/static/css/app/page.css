@@ -300,17 +300,35 @@
   gap: 1rem;
 }
 
-/* Target for html-to-image */
-#DecisionEngine_reddit-card-canvas__sT6ie {
+/* Target for html-to-image - Styling via local class */
+.DecisionEngine_redditCardCanvas__7rwPq {
   width: 1080px;
   height: 1350px;
-  background: white;
-  padding: 40px;
+  background: white !important;
+  padding: 60px;
   font-family: 'Courier New', Courier, monospace;
-  position: absolute;
-  left: -9999px; /* Hide off-screen */
-  top: 0;
+  position: fixed !important;
+  left: -9999px !important;
+  top: -9999px !important;
   border: 1px solid black;
+  display: flex !important;
+  flex-direction: column;
+  z-index: -1000;
+  color: black !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.DecisionEngine_redditCardCanvas__7rwPq table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.DecisionEngine_redditCardCanvas__7rwPq th, .DecisionEngine_redditCardCanvas__7rwPq td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 

@@ -234,175 +234,160 @@ export default function DecisionEngine() {
         {selectedSchools.length === 0 ? (
           <div className={styles.emptyState}>[ SELECT SCHOOLS TO BEGIN ]</div>
         ) : (
-          <div className={styles.scrollArea}>
-            <DndContext 
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <div className={styles.stickyHeader}>
-                <div className={styles.labelCell}>SCHOOL (DRAG TO REORDER)</div>
-                <SortableContext 
-                  items={selectedSchools.map(s => s.instanceId)}
-                  strategy={horizontalListSortingStrategy}
-                >
-                  {selectedSchools.map((school) => (
-                    <SortableHeader 
-                      key={school.instanceId} 
-                      id={school.instanceId} 
-                      school={school} 
-                      weights={weights} 
-                      allSchools={selectedSchools}
-                      onRemove={removeSchool}
-                    />
-                  ))}
-                </SortableContext>
-              </div>
-            </DndContext>
-
-            {/* Data Rows */}
-            <section className={styles.categorySection}>
-              <div className={styles.categoryTitle}>PRESTIGE & BRAND</div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>PRESTIGE TIER</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    {renderStars(school.instanceId, 'prestigeTier', school.prestigeTier)}
-                  </div>
+          <DndContext 
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <div className={styles.cardGrid}>
+              <SortableContext 
+                items={selectedSchools.map(s => s.instanceId)}
+                strategy={horizontalListSortingStrategy}
+              >
+                {selectedSchools.map((school) => (
+                  <SchoolCard 
+                    key={school.instanceId} 
+                    school={school} 
+                    weights={weights} 
+                    allSchools={selectedSchools}
+                    onRemove={removeSchool}
+                    renderStars={renderStars}
+                    updateSchoolField={updateSchoolField}
+                  />
                 ))}
-              </div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>BRAND PERCEPTION</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    {renderStars(school.instanceId, 'brandPerception', school.brandPerception)}
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className={styles.categorySection}>
-              <div className={styles.categoryTitle}>PROGRAM FEEL & CULTURE</div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>CULTURE SCORE</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    {renderStars(school.instanceId, 'cultureScore', school.cultureScore)}
-                  </div>
-                ))}
-              </div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>GUT FEEL</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    {renderStars(school.instanceId, 'gutFeel', school.gutFeel)}
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className={styles.categorySection}>
-              <div className={styles.categoryTitle}>CAREER FIT</div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>RECRUITING STRENGTH</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    {renderStars(school.instanceId, 'careerFit', school.careerFit)}
-                  </div>
-                ))}
-              </div>
-              <div className={styles.row}>
-                 <div className={styles.labelCell}>KEY EMPLOYER PRESENCE</div>
-                 {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    <select 
-                      value={school.employerPresence}
-                      onChange={(e) => updateSchoolField(school.instanceId, 'employerPresence', e.target.value)}
-                    >
-                      <option value="Yes">Yes</option>
-                      <option value="Partial">Partial</option>
-                      <option value="No">No</option>
-                    </select>
-                  </div>
-                 ))}
-              </div>
-            </section>
-
-            <section className={styles.categorySection}>
-              <div className={styles.categoryTitle}>FINANCIAL</div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>EST. 2-YR TOTAL</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    <input 
-                      className={styles.numInput} type="number"
-                      value={school.estTotal}
-                      onChange={(e) => updateSchoolField(school.instanceId, 'estTotal', parseInt(e.target.value))}
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>SCHOLARSHIP</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    <input 
-                      className={styles.numInput} type="number"
-                      value={school.scholarship}
-                      onChange={(e) => updateSchoolField(school.instanceId, 'scholarship', parseInt(e.target.value))}
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className={styles.categorySection}>
-              <div className={styles.categoryTitle}>LOCATION & LIFE</div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>CITY</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    {school.location}
-                  </div>
-                ))}
-              </div>
-              <div className={styles.row}>
-                <div className={styles.labelCell}>PROXIMITY (1-5)</div>
-                {selectedSchools.map(school => (
-                  <div key={school.instanceId} className={styles.cell}>
-                    {renderStars(school.instanceId, 'proximity', school.proximity)}
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className={styles.categorySection}>
-                <div className={styles.categoryTitle}>NOTES & STATUS</div>
-                <div className={styles.row}>
-                    <div className={styles.labelCell}>RULED OUT?</div>
-                    {selectedSchools.map(school => (
-                      <div key={school.instanceId} className={styles.cell}>
-                        <input 
-                          type="checkbox" checked={school.isRuledOut}
-                          onChange={(e) => updateSchoolField(school.instanceId, 'isRuledOut', e.target.checked)}
-                        />
-                      </div>
-                    ))}
-                </div>
-                <div className={styles.row}>
-                   <div className={styles.labelCell}>NOTES</div>
-                   {selectedSchools.map(school => (
-                      <div key={school.instanceId} className={styles.cell}>
-                        <textarea 
-                          className={styles.notesArea} value={school.notes}
-                          onChange={(e) => updateSchoolField(school.instanceId, 'notes', e.target.value)}
-                        />
-                      </div>
-                   ))}
-                </div>
-             </section>
-          </div>
+              </SortableContext>
+            </div>
+          </DndContext>
         )}
+      </div>
+    </div>
+  )
+}
+
+function SchoolCard({ school, weights, allSchools, onRemove, renderStars, updateSchoolField }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: school.instanceId })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  const score = calculateCompositeScore(school, allSchools, weights)
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={`${styles.schoolCard} ${school.isRuledOut ? styles.ruledOutCard : ''}`}
+    >
+      <div className={styles.cardHeader} {...attributes} {...listeners}>
+        <div className={styles.headerLeft}>
+          <span className={styles.cardSchoolName}>{school.name}</span>
+          <span className={styles.cardLocation}>{school.location}</span>
+        </div>
+        <div className={styles.cardScore}>
+          {school.isRuledOut ? 'RULED OUT' : `${score}/100`}
+        </div>
+        <button 
+          className={styles.removeBtn} 
+          onClick={() => onRemove(school.instanceId)}
+        >x</button>
+      </div>
+
+      <div className={styles.cardBody}>
+        {school.isRuledOut && <div className={styles.ruledOutOverlay}>DISCARDED</div>}
+        
+        <div className={styles.cardSection}>
+          <span className={styles.sectionLabel}>PRESTIGE & BRAND</span>
+          <div className={styles.fieldRow}>
+            <label>PRESTIGE TIER</label>
+            {renderStars(school.instanceId, 'prestigeTier', school.prestigeTier)}
+          </div>
+          <div className={styles.fieldRow}>
+            <label>BRAND PERCEPTION</label>
+            {renderStars(school.instanceId, 'brandPerception', school.brandPerception)}
+          </div>
+        </div>
+
+        <div className={styles.cardSection}>
+          <span className={styles.sectionLabel}>PROGRAM FEEL & CULTURE</span>
+          <div className={styles.fieldRow}>
+            <label>CULTURE SCORE</label>
+            {renderStars(school.instanceId, 'cultureScore', school.cultureScore)}
+          </div>
+          <div className={styles.fieldRow}>
+            <label>GUT FEEL</label>
+            {renderStars(school.instanceId, 'gutFeel', school.gutFeel)}
+          </div>
+        </div>
+
+        <div className={styles.cardSection}>
+          <span className={styles.sectionLabel}>CAREER FIT</span>
+          <div className={styles.fieldRow}>
+            <label>RECRUITING</label>
+            {renderStars(school.instanceId, 'careerFit', school.careerFit)}
+          </div>
+          <div className={styles.fieldRow}>
+            <label>KEY EMPLOYERS</label>
+            <select 
+              value={school.employerPresence}
+              onChange={(e) => updateSchoolField(school.instanceId, 'employerPresence', e.target.value)}
+            >
+              <option value="Yes">Yes</option>
+              <option value="Partial">Partial</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+
+        <div className={styles.cardSection}>
+          <span className={styles.sectionLabel}>FINANCIAL</span>
+          <div className={styles.fieldRow}>
+            <label>EST. TOTAL</label>
+            <input 
+              className={styles.numInput} type="number"
+              value={school.estTotal}
+              onChange={(e) => updateSchoolField(school.instanceId, 'estTotal', parseInt(e.target.value))}
+            />
+          </div>
+          <div className={styles.fieldRow}>
+            <label>SCHOLARSHIP</label>
+            <input 
+              className={styles.numInput} type="number"
+              value={school.scholarship}
+              onChange={(e) => updateSchoolField(school.instanceId, 'scholarship', parseInt(e.target.value))}
+            />
+          </div>
+        </div>
+
+        <div className={styles.cardSection}>
+          <span className={styles.sectionLabel}>LOCATION</span>
+          <div className={styles.fieldRow}>
+            <label>PROXIMITY (1-5)</label>
+            {renderStars(school.instanceId, 'proximity', school.proximity)}
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.cardFooter}>
+        <div className={styles.fieldRow}>
+          <label style={{ fontWeight: 'bold' }}>RULED OUT?</label>
+          <input 
+            type="checkbox" checked={school.isRuledOut}
+            onChange={(e) => updateSchoolField(school.instanceId, 'isRuledOut', e.target.checked)}
+          />
+        </div>
+        <textarea 
+          className={styles.notesArea} value={school.notes}
+          placeholder="Add notes..."
+          onChange={(e) => updateSchoolField(school.instanceId, 'notes', e.target.value)}
+        />
       </div>
     </div>
   )

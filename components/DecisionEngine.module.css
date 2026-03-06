@@ -31,16 +31,19 @@
 }
 
 .categorySection {
-  border-top: 2px solid black;
+  margin-bottom: 2rem;
 }
 
 .categoryTitle {
-  background: #dde;
-  padding: 0.25rem 0.5rem;
+  background: var(--navy);
+  color: white;
+  padding: 0.5rem 1rem;
   font-weight: bold;
-  font-size: 0.9rem;
-  border-bottom: 1px solid black;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  border: 1px solid black;
 }
+
 
 .numInput {
   width: 80%;
@@ -109,11 +112,145 @@
   font-weight: bold;
 }
 
+/* New Card-Based Layout */
+.comparisonGrid {
+  padding: 1rem 0;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.schoolCard {
+  background: white;
+  border: 3px solid black;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.1s;
+}
+
+.schoolCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+}
+
+.cardHeader {
+  background: #eee;
+  padding: 1rem;
+  border-bottom: 2px solid black;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.headerLeft {
+  flex: 1;
+}
+
+.cardSchoolName {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.cardLocation {
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.cardScore {
+  background: var(--navy);
+  color: white;
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
+  margin: -1rem -1rem 0 0;
+}
+
+.cardBody {
+  padding: 1rem;
+}
+
+.cardSection {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed #ccc;
+}
+
+.cardSection:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.sectionLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.fieldRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.fieldRow label {
+  font-size: 0.85rem;
+}
+
+.cardFooter {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-top: 1px solid black;
+}
+
+.ruledOutCard {
+  opacity: 0.6;
+  background: #f0f0f0;
+}
+
+.ruledOutOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  border: 4px solid red;
+  color: red;
+  font-weight: bold;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  pointer-events: none;
+  z-index: 10;
+  background: rgba(255,255,255,0.8);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 5rem;
+  border: 4px dashed #ccc;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #888;
+}
+
 .loading {
   padding: 5rem;
   text-align: center;
   font-weight: bold;
 }
+
 
 /* Reddit Export Modal */
 .redditModal {

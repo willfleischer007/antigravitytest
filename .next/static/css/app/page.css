@@ -34,16 +34,19 @@
 }
 
 .DecisionEngine_categorySection__fD_UW {
-  border-top: 2px solid black;
+  margin-bottom: 2rem;
 }
 
 .DecisionEngine_categoryTitle__hSkwG {
-  background: #dde;
-  padding: 0.25rem 0.5rem;
+  background: var(--navy);
+  color: white;
+  padding: 0.5rem 1rem;
   font-weight: bold;
-  font-size: 0.9rem;
-  border-bottom: 1px solid black;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  border: 1px solid black;
 }
+
 
 .DecisionEngine_numInput__aecxD {
   width: 80%;
@@ -115,11 +118,146 @@
   font-weight: bold;
 }
 
+/* New Card-Based Layout */
+.DecisionEngine_comparisonGrid__YFAUS {
+  padding: 1rem 0;
+}
+
+.DecisionEngine_cardGrid__Dgted {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-gap: 1.5rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.DecisionEngine_schoolCard__8t3Sy {
+  background: white;
+  border: 3px solid black;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.1s;
+}
+
+.DecisionEngine_schoolCard__8t3Sy:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+}
+
+.DecisionEngine_cardHeader__byAfh {
+  background: #eee;
+  padding: 1rem;
+  border-bottom: 2px solid black;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.DecisionEngine_headerLeft__0DZYP {
+  flex: 1 1;
+}
+
+.DecisionEngine_cardSchoolName__oC418 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.DecisionEngine_cardLocation__GVT9w {
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.DecisionEngine_cardScore__D_VIN {
+  background: var(--navy);
+  color: white;
+  padding: 0.5rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
+  margin: -1rem -1rem 0 0;
+}
+
+.DecisionEngine_cardBody__OBgDl {
+  padding: 1rem;
+}
+
+.DecisionEngine_cardSection__rUWJJ {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed #ccc;
+}
+
+.DecisionEngine_cardSection__rUWJJ:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.DecisionEngine_sectionLabel__VHAZW {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.DecisionEngine_fieldRow__wxGt9 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.DecisionEngine_fieldRow__wxGt9 label {
+  font-size: 0.85rem;
+}
+
+.DecisionEngine_cardFooter__qvkzq {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-top: 1px solid black;
+}
+
+.DecisionEngine_ruledOutCard__1KPzN {
+  opacity: 0.6;
+  background: #f0f0f0;
+}
+
+.DecisionEngine_ruledOutOverlay__bmVxP {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  border: 4px solid red;
+  color: red;
+  font-weight: bold;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  pointer-events: none;
+  z-index: 10;
+  background: rgba(255,255,255,0.8);
+}
+
+.DecisionEngine_emptyState__KlKez {
+  text-align: center;
+  padding: 5rem;
+  border: 4px dashed #ccc;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #888;
+}
+
 .DecisionEngine_loading__suMM6 {
   padding: 5rem;
   text-align: center;
   font-weight: bold;
 }
+
 
 /* Reddit Export Modal */
 .DecisionEngine_redditModal__tgQ3P {

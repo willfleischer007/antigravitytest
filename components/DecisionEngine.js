@@ -20,6 +20,7 @@ import { CSS } from '@dnd-kit/utilities'
 
 import schoolsData from '@/data/schools.json'
 import { calculateCompositeScore, DEFAULT_WEIGHTS } from '@/lib/scoring'
+import styles from './DecisionEngine.module.css'
 import HowItWorks from './HowItWorks'
 import RedditShareModal from './RedditShareModal'
 
